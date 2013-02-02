@@ -13,6 +13,40 @@ class Routing
         $this->app = $app;
     }
 
+    public function getBranchTagRegex()
+    {
+        static $branch_regex = null;
+
+        if ($branch_regex === null) {
+            $app = $this->app;
+
+            $branch_names = array();
+            $repos = $this->app['git']->getRepositories($this->app['git.repos']);
+            $branch_names = array();
+            $tag_names = array();
+            foreach ($repos as $repo) {
+                $repo = $app['git']->getRepository($repo['path']);
+
+                $repo_branch_names = $repo->getBranches();
+                if (is_array($repo_branch_names) === TRUE) {
+                    $branch_names = array_merge($branch_names,
+                                                $repo_branch_names);
+                }
+
+                $repo_tag_names = $repo->getTags();
+                if (is_array($repo_tag_names) === TRUE) {
+                    $tag_names = array_merge($tag_names, $repo_tag_names);
+                }
+            }
+
+            $names = array_merge($branch_names, $tag_names);
+
+            $branch_regex = '(' . implode('|', $names) . ')';
+        }
+
+        return $branch_regex;
+    }
+
     public function getRepositoryRegex()
     {
         static $regex = null;

@@ -45,7 +45,7 @@ class CommitController implements ControllerProviderInterface
                 'file'           => $file,
             ));
         })->assert('repo', $app['util.routing']->getRepositoryRegex())
-          ->assert('branch', '[\w-._\/]+')
+          ->assert('branch', $app['util.routing']->getBranchTagRegex())
           ->assert('file', '.+')
           ->value('branch', null)
           ->value('file', '')
@@ -73,7 +73,7 @@ class CommitController implements ControllerProviderInterface
                 'query'          => $query
             ));
         })->assert('repo', $app['util.routing']->getRepositoryRegex())
-          ->assert('branch', '[\w-._\/]+')
+          ->assert('branch', $app['util.routing']->getBranchTagRegex())
           ->bind('searchcommits');
 
         $route->get('{repo}/commit/{commit}', function($repo, $commit) use ($app) {
@@ -107,7 +107,7 @@ class CommitController implements ControllerProviderInterface
             ));
         })->assert('repo', $app['util.routing']->getRepositoryRegex())
           ->assert('file', '.+')
-          ->assert('branch', '[\w-._\/]+')
+          ->assert('branch', $app['util.routing']->getBranchTagRegex())
           ->bind('blame');
 
         return $route;
